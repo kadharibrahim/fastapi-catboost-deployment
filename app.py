@@ -1,27 +1,37 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
 import catboost
 import numpy as np
-from pydantic import BaseModel
-
-# Load the model
-model = catboost.CatBoostRegressor()
-model.load_model("deployed_catboost_model.cbm")
-
-print("✅ Model Loaded Successfully!")
 
 # Initialize FastAPI app
 app = FastAPI()
 
-# Define request format
-class PredictionRequest(BaseModel):
-    features: list  # Ensure input is a list of numerical features
+# Load the trained CatBoost model
+model = catboost.CatBoostRegressor()
+model.load_model("deployed_catboost_model.cbm")  # Ensure this file exists
+
+# Categorical feature indices
+cat_features_indices = [4, 5]
+
+class InputData(BaseModel):
+    features: list
 
 @app.post("/predict/")
-def predict(request: PredictionRequest):
-    features = np.array(request.features).reshape(1, -1)  # Convert input to NumPy array
-    prediction = model.predict(features)  # Make prediction
-    return {"prediction": float(prediction)}
+def predict(data: InputData):
+    try:
+        # Convert input to numpy array
+        features = np.array([data.features], dtype=object)  # Use dtype=object for mixed types
 
-# Run API using:
-# uvicorn app:app --host 0.0.0.0 --port 8000 --reload
-    
+        # Convert categorical features to string type
+        for i in cat_features_indices:
+            features[:, i] = features[:, i].astype(str)
+
+        # Create CatBoost Pool object
+        test_pool = catboost.Pool(data=features, cat_features=cat_features_indices)
+
+        # Make prediction
+        prediction = model.predict(test_pool)
+
+        return {"prediction": prediction.tolist()}
+    except Exception as e:
+        return {"error": str(e)}
