@@ -8,11 +8,11 @@ app = FastAPI()
 
 # Load the trained model
 model = catboost.CatBoostRegressor()
-model.load_model("deployed_catboost_model.cbm")
+model.load_model("deployed_catboost_model.cbm")  # Ensure this file is uploaded in GitHub
 
 # Define request format
 class PredictionRequest(BaseModel):
-    features: list  # Input should be a list of numerical features
+    features: list  # Expecting a list of numerical and categorical values
 
 @app.post("/predict/")
 def predict(request: PredictionRequest):
@@ -20,4 +20,4 @@ def predict(request: PredictionRequest):
     prediction = model.predict(features)  # Make prediction
     return {"prediction": float(prediction)}
 
-# Run API using: uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+# To run locally: uvicorn app:app --host 0.0.0.0 --port 8000 --reload
