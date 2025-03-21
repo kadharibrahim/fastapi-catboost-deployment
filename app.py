@@ -1,37 +1,29 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
 import catboost
 import numpy as np
+import json
 
-# Initialize FastAPI app
 app = FastAPI()
 
-# Load the trained CatBoost model
+# Load trained model
 model = catboost.CatBoostRegressor()
-model.load_model("deployed_catboost_model.cbm")  # Ensure this file exists
-
-# Categorical feature indices
-cat_features_indices = [4, 5]
-
-class InputData(BaseModel):
-    features: list
+model.load_model("deployed_catboost_model.cbm")  # Ensure model file is correct
 
 @app.post("/predict/")
-def predict(data: InputData):
+def predict(data: dict):
     try:
-        # Convert input to numpy array
-        features = np.array([data.features], dtype=object)  # Use dtype=object for mixed types
+        features = np.array(data["features"]).reshape(1, -1)  # Ensure correct shape
 
-        # Convert categorical features to string type
-        for i in cat_features_indices:
-            features[:, i] = features[:, i].astype(str)
+        # Debugging: Print received input
+        print("Received Features:", features)
 
-        # Create CatBoost Pool object
-        test_pool = catboost.Pool(data=features, cat_features=cat_features_indices)
+        # Validate feature length
+        if features.shape[1] != len(model.feature_names_):
+            return {"error": f"Expected {len(model.feature_names_)} features, but got {features.shape[1]}"}
 
         # Make prediction
-        prediction = model.predict(test_pool)
+        prediction = model.predict(features)
+        return {"fare_amount": prediction.tolist()}
 
-        return {"prediction": prediction.tolist()}
     except Exception as e:
         return {"error": str(e)}
