@@ -7,7 +7,7 @@ app = FastAPI()
 
 # Load the trained CatBoost model
 model = catboost.CatBoostRegressor()
-model.load_model("catboost_model.cbm")  # Make sure this file is in the same directory
+model.load_model("deployed_catboost_model.cbm")  # Make sure this file is in the same directory
 
 @app.get("/")
 def home():
