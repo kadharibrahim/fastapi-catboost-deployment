@@ -6,7 +6,10 @@ from pydantic import BaseModel
 # Load the trained CatBoost model
 model = catboost.CatBoostRegressor()
 model.load_model("deployed_catboost_model.cbm")
-print("✅ Model Loaded Successfully!")  # Add this line
+print("✅ Model Loaded Successfully!")
+
+# 🚀 Fix: Ensure no categorical features
+model._init_params["cat_features"] = None  
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -19,10 +22,13 @@ class PredictionRequest(BaseModel):
 def predict(request: PredictionRequest):
     try:
         features = np.array(request.features).reshape(1, -1)  # Convert to NumPy array
-        print("🔹 Received Features:", features)  # Debugging print
-        prediction = model.predict(features)  # Make prediction
-        print("🔹 Prediction:", prediction)  # Debugging print
+        print("🔹 Received Features:", features)  
+        
+        # 🔥 Fix: Predict with numerical-only input
+        prediction = model.predict(features)  
+        
+        print("🔹 Prediction:", prediction)  
         return {"prediction": float(prediction)}
     except Exception as e:
-        print("❌ Error:", str(e))  # Debugging print
+        print("❌ Error:", str(e))  
         return {"error": str(e)}
