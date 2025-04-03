@@ -7,3 +7,6 @@ datetime
 pandas
 numpy
 pyperclip
+folium
+streamlit-folium
+
