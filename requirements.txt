@@ -1,3 +1,9 @@
 fastapi
 uvicorn
 catboost
+streamlit
+requests
+datetime
+pandas
+numpy
+pyperclip
