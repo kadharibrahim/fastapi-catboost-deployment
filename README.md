@@ -1,119 +1,202 @@
-🚀 FastAPI CatBoost Deployment
+
+🚀 FastAPI + CatBoost Model Deployment: Uber Fare Prediction API
+=================================================================
+
+This project demonstrates a full ML workflow—from data analysis to deploying a CatBoost regression model using FastAPI. It predicts Uber ride fares based on trip features like time, location, and more. Ideal for learning and showcasing real-world machine learning deployment.
+
+📘 Table of Contents
+--------------------
+- 📌 Overview
+- 🧠 Project Highlights
+- 🗂️ Directory Structure
+- 🔍 Exploratory Data Analysis
+- 📦 Model Deployment with FastAPI
+- 🚀 Getting Started
+- 🌐 API Documentation
+- ☁️ Deployment on Render
+- 📊 Example Predictions
+- 🎯 Use Cases
+- 🛠️ Tech Stack
+- 🙌 Acknowledgements
+- 📜 License
+
 📌 Overview
-This repository contains a FastAPI application that serves a CatBoost machine learning model for predicting Uber ride fares. The model expects 35 input features and returns a fare prediction.
+-----------
+This project demonstrates:
+- Real-time fare prediction using FastAPI
+- A trained and deployed CatBoost regression model
+- Cleaned and feature-engineered Uber ride data
+- Exploratory data analysis and model training in Jupyter
+- REST API endpoint for prediction
+- Production-ready structure with `Procfile` and `requirements.txt`
 
-✅ Built with: FastAPI, CatBoost, Uvicorn
-✅ Deployed on: Render
+🧠 Project Highlights
+---------------------
 
-🌍 Live API URL
-🔗 Base URL: https://fastapi-catboost-deployment.onrender.com
+| Feature              | Description                                             |
+|----------------------|---------------------------------------------------------|
+| 🧠 ML Model          | CatBoost Regressor trained on curated Uber ride data    |
+| 📊 EDA & Preprocessing| In-depth analysis in `uber_analysis.ipynb`              |
+| ⚡ Realtime Prediction| REST API using FastAPI                                  |
+| 🌍 Deployment        | Render-ready via `Procfile`                              |
+| 🛡️ Robustness        | Error handling, validation, clean architecture           |
+| 🧪 Testing           | Swagger UI for API testing and interaction              |
 
-📌 Interactive Docs (Swagger UI):
-🔗 https://fastapi-catboost-deployment.onrender.com/docs
+📁 Directory Structure
+----------------------
 
-📌 OpenAPI JSON Schema:
-🔗 https://fastapi-catboost-deployment.onrender.com/openapi.json
+```
+uber-fare-prediction-fastapi/
+├── app.py                     # FastAPI app for model inference
+├── deployed_catboost_model.cbm # Trained CatBoost model
+├── uber_analysis.ipynb       # Jupyter Notebook for EDA & training
+├── requirements.txt          # Project dependencies
+├── Procfile                  # Deployment config for Render
+└── README.md                 # Project documentation (this file)
+```
 
-🛠️ How to Use the API
-🔹 1. Make a Prediction
-📌 Method: POST
-📌 Endpoint: /predict/
-📌 Content-Type: application/json
+🔍 Exploratory Data Analysis (EDA)
+----------------------------------
 
-🔹 Request Format
-Send a JSON payload with exactly 35 features inside the "features" array.
+Contained in [`uber_analysis.ipynb`](./uber_analysis.ipynb):
+- **Data Cleaning:** Handling missing values, outlier detection
+- **Feature Engineering:** Time-of-day extraction, location categorization
+- **Visualization:** Fare vs. distance, pickup time heatmaps
+- **Model Evaluation:** RMSE, MAE, R² metrics on test data
+- **Model Export:** Saved using `.save_model()` in CatBoost
 
-json
-Copy
-Edit
+📦 Model Deployment with FastAPI
+--------------------------------
+`app.py` contains the FastAPI app that:
+- Loads the trained `.cbm` model at startup
+- Accepts POST requests with JSON-formatted input features
+- Uses CatBoost's `Pool()` with specified categorical indices
+- Returns a prediction with structured JSON output
+
+```python
+@app.post("/predict/")
+def predict(features: dict):
+    ...
+```
+
+### Example input:
+```json
 {
-  "features": [
-    3.2, 0, 1, 9.6, 12, 45, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-  ]
+  "features": [2.0, 5.0, 0.5, 1.2, "Manhattan", "JFK"]
 }
-🔹 Response Format
-📌 Success Response (200 OK)
+```
 
-json
-Copy
-Edit
+🚀 Getting Started
+------------------
+
+🔧 Prerequisites:
+- Python 3.8+
+- Git
+
+1. **Clone the repository**
+```bash
+git clone https://github.com/your-username/uber-fare-prediction-fastapi.git
+cd uber-fare-prediction-fastapi
+```
+
+2. **Create a virtual environment**
+```bash
+python -m venv venv
+source venv/bin/activate  # For Windows: venv\Scripts\activate
+```
+
+3. **Install dependencies**
+```bash
+pip install -r requirements.txt
+```
+
+4. **Run the FastAPI app**
+```bash
+uvicorn app:app --reload
+```
+Access it at: [http://127.0.0.1:8000](http://127.0.0.1:8000)  
+Swagger docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+🌐 API Documentation
+--------------------
+
+- **Endpoint:** `/predict/`
+- **Method:** `POST`
+- **Request Body:** JSON
+- **Response:** JSON with fare prediction
+
+✅ Request Format:
+```json
 {
-  "prediction": [275.87]
+  "features": [pickup_hour, day_of_week, distance_km, duration_min, pickup_area, dropoff_area]
 }
-📌 Error Response (400 Bad Request)
+```
 
-json
-Copy
-Edit
+🔁 Sample Response:
+```json
 {
-  "error": "Expected 35 features, but got 34"
+  "prediction": [18.45]
 }
-📌 Error Response (422 Unprocessable Entity)
+```
 
-json
-Copy
-Edit
-{
-  "error": "'data' is numpy array of floating point numerical type, it means no categorical features, but 'cat_features' parameter specifies nonzero number of categorical features"
-}
-📌 Testing the API
-🔹 Option 1: Swagger UI
-Visit https://fastapi-catboost-deployment.onrender.com/docs and test the /predict/ endpoint interactively.
+☁️ Deployment on Render
+------------------------
+1. Push your code to GitHub  
+2. Go to [https://render.com](https://render.com)  
+3. Create a New Web Service  
+- **Build Command:** `pip install -r requirements.txt`  
+- **Start Command:** `uvicorn app:app --host 0.0.0.0 --port $PORT`  
+4. Add `Procfile` with content:  
+```
+web: uvicorn app:app --host 0.0.0.0 --port $PORT
+```
 
-🔹 Option 2: Python Script
-Run this script to test the API:
+📊 Example Predictions
+----------------------
 
-python
-Copy
-Edit
-import requests
+Try in Swagger UI `/docs` or using curl:
+```bash
+curl -X POST http://localhost:8000/predict/ -H "Content-Type: application/json" -d '{"features": [15, 2, 8.3, 24, "Manhattan", "JFK"]}'
+```
+Response:
+```json
+{"prediction": [32.75]}
+```
 
-url = "https://fastapi-catboost-deployment.onrender.com/predict/"
-data = {
-    "features": [3.2, 0, 1, 9.6, 12, 45, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-}
+🎯 Use Cases
+------------
+- 📱 Uber fare estimation app backend
+- 🧠 Real-time regression API showcase
+- 📊 Model deployment tutorial for ML learners
+- 🧪 Experimentation platform for feature engineering
+- 💼 Resume project for machine learning engineers
 
-response = requests.post(url, json=data)
-print("Status Code:", response.status_code)
-print("Response:", response.json())
-🔹 Option 3: cURL Command
-Run this in a terminal:
+🛠️ Tech Stack
+-------------
+- **Language:** Python 3.8+
+- **Framework:** FastAPI
+- **ML Model:** CatBoost Regressor
+- **Visualization:** Matplotlib, Pandas
+- **Deployment:** Render
+- **Testing:** Swagger / Curl / Postman
 
-sh
-Copy
-Edit
-curl -X 'POST' \
-  'https://fastapi-catboost-deployment.onrender.com/predict/' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "features": [3.2, 0, 1, 9.6, 12, 45, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-}'
-📂 Project Structure
-bash
-Copy
-Edit
-📦 fastapi-catboost-deployment
- ┣ 📜 app.py               # FastAPI application
- ┣ 📜 deployed_catboost_model.cbm  # Trained CatBoost model
- ┣ 📜 requirements.txt      # Dependencies
- ┣ 📜 Procfile             # Deployment script (for Render)
- ┣ 📜 README.md            # API documentation (this file)
- ┗ 📜 .gitignore           # Ignore unnecessary files
-🚀 Deployment & Hosting
-✅ Deployed on: Render
-✅ Model: CatBoost Regressor
-✅ Auto-deploy enabled: Updates pushed to GitHub redeploy automatically.
+🙌 Acknowledgements
+-------------------
+- CatBoost by Yandex
+- FastAPI by Sebastián Ramírez
+- Dataset inspired by Uber open trip data
 
-💡 Future Improvements
-🔹 Improve model performance.
-🔹 Add authentication for secured API access.
-🔹 Build a front-end UI to interact with the API.
+📜 License
+----------
+This project is licensed under the MIT License.
 
-📬 Contact & Support
-👤 Developer: Kadhar Ibrahim
-📧 Email: kadharibrahim0@gmail.com
-🔗 GitHub Repo: fastapi-catboost-deployment
+⭐️ Show Your Support
+---------------------
+If you found this project helpful:
+- 🌟 Star this repository
+- 🍴 Fork it for your own use
+- 🧑‍💻 Connect with me on [LinkedIn](#)
+- 📬 Raise issues or ideas for improvements
 
-⭐ If you find this project useful, don't forget to give it a star! ⭐
-Happy coding! 🚀🎯
+> “Building real-time, intelligent systems is no longer optional—it's the future.”  
+> — **Kadhar Ibrahim** 🚀 | 💡 Data Enthusiast | 🧠 ML Explorer | 🔧 Problem Solver
