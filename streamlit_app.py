@@ -105,7 +105,7 @@ is_night = hour_of_day >= 20 or hour_of_day < 6
 if is_night:
     surge_icon = "🌙 Night Vibes "
 elif is_peak_hour and is_weekend:
-    surge_icon = "🚗 Weekend Rush High Demand"
+    surge_icon = "🔥 Weekend Rush High Demand"
 elif is_peak_hour:
     surge_icon = "🚦 Peak Hours Surge Pricing "
 elif is_weekend:
