@@ -1,4 +1,5 @@
 import streamlit as st
+import time
 import requests
 import datetime
 import random
@@ -28,6 +29,7 @@ st.markdown(page_bg_img, unsafe_allow_html=True)
 GOOGLE_MAPS_API_KEY = "AIzaSyAbgA9gFMQo2ccFDTLS0L1oD3o48DQqZoo"
 FASTAPI_URL = "https://fastapi-catboost-deployment.onrender.com/predict/"
 share_url = "https://fastapi-catboost-deployment-2fwbm6usdyjwysvaytzgde.streamlit.app/#b7480d73"
+
 location_mapping = {
     "Anna Nagar (VR Mall) 🏦": (13.0827, 80.2170, 1),
     "Chennai Central Railway Station (Chennai Central) 🚉": (13.0839, 80.2707, 2),  
@@ -105,7 +107,7 @@ is_night = hour_of_day >= 20 or hour_of_day < 6
 if is_night:
     surge_icon = "🌙 Night Vibes "
 elif is_peak_hour and is_weekend:
-    surge_icon = "🔥 Weekend Rush High Demand"
+    surge_icon = "🚗 Weekend Rush High Demand"
 elif is_peak_hour:
     surge_icon = "🚦 Peak Hours Surge Pricing "
 elif is_weekend:
@@ -183,7 +185,21 @@ with col1:
             st.session_state.show_ride_options = True
             st.session_state.show_best_times = False
             data = {"features": features}
-            response = requests.post(FASTAPI_URL, json=data)
+            max_retries = 3
+            for attempt in range(max_retries):
+                try:
+                    response = requests.post(FASTAPI_URL, json=data, timeout=10)
+                    response.raise_for_status()
+                    result = response.json()
+                    break
+                except requests.exceptions.RequestException as e:
+                    if attempt < max_retries - 1:
+                        st.warning("Waking up the prediction engine... please wait ⏳")
+                        time.sleep(5)  # wait before retry
+                    else:
+                        st.error("🚫 Could not connect to the prediction engine. Please try again later.")
+                        st.stop()
+
 
             if response.status_code == 200:
                 result = response.json()
