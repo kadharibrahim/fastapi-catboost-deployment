@@ -30,7 +30,7 @@ FASTAPI_URL = "https://fastapi-catboost-deployment.onrender.com/predict/"
 share_url = "https://fastapi-catboost-deployment-2fwbm6usdyjwysvaytzgde.streamlit.app/#b7480d73"
 location_mapping = {
     "Anna Nagar (VR Mall) 🏦": (13.0827, 80.2170, 1),
-    "Chennai Central Railway Station (Chennai Central) 🚉": (13.0839, 80.2707, 2),
+    "Chennai Central Railway Station (Chennai Central) 🚉": (13.0839, 80.2707, 2),  
     "Guindy (Race Course) 🏇": (13.0072, 80.2209, 3),
     "Marina Beach (Marina Beach) 🌊": (13.0495, 80.2820, 4),
     "Perambur (Sri Brindavan Theatre) 🎭": (13.1173, 80.2503, 5),
@@ -103,16 +103,15 @@ is_night = hour_of_day >= 20 or hour_of_day < 6
 
 # Choose surge icon
 if is_night:
-    surge_icon = "🌙 Night Vibes - Calm and Cool"
+    surge_icon = "🌙 Night Vibes "
 elif is_peak_hour and is_weekend:
-    surge_icon = "🚗 Weekend Rush - Expect High Demand"
+    surge_icon = "🚗 Weekend Rush High Demand"
 elif is_peak_hour:
-    surge_icon = "🚦 Peak Hours - Surge Pricing Active"
+    surge_icon = "🚦 Peak Hours Surge Pricing "
 elif is_weekend:
-    surge_icon = "🍿 Weekend Chill -Few Rides"
+    surge_icon = "🍿 Weekend Chill "
 else:
-    surge_icon = "✅ Smooth Ride - Regular Pricing"
-
+    surge_icon = "✅ Smooth Ride Regular Pricing"
 
 # Show surge + share button (fixed with real app URL)
 components.html(
