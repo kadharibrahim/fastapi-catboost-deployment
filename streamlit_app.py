@@ -27,8 +27,7 @@ st.markdown(page_bg_img, unsafe_allow_html=True)
 
 GOOGLE_MAPS_API_KEY = "AIzaSyAbgA9gFMQo2ccFDTLS0L1oD3o48DQqZoo"
 FASTAPI_URL = "https://fastapi-catboost-deployment.onrender.com/predict/"
-share_url = https://fastapi-catboost-deployment-2fwbm6usdyjwysvaytzgde.streamlit.app/#b7480d73"
-
+share_url = "https://fastapi-catboost-deployment-2fwbm6usdyjwysvaytzgde.streamlit.app/#b7480d73"
 location_mapping = {
     "Anna Nagar (VR Mall) 🏦": (13.0827, 80.2170, 1),
     "Chennai Central Railway Station (Chennai Central) 🚉": (13.0839, 80.2707, 2),
