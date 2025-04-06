@@ -305,7 +305,7 @@ data = {
 
 fare_df = pd.DataFrame(data)
 
-st.subheader("📊 Uber Fare Trend by Hour")
+st.subheader("📊 Uber Fare Trend by Hour compare with auto")
 
 melted_df = fare_df.melt(id_vars='Hour', var_name='Ride Type', value_name='Fare')
 
