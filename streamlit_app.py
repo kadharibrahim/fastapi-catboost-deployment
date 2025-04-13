@@ -329,9 +329,9 @@ np.random.seed(42)
 
 data = {
     'Hour': hours,
-    'Moto': np.random.normal(loc=120, scale=5, size=24).round(2),
-    'Auto': np.random.normal(loc=190, scale=8, size=24).round(2),
-    'SUV': np.random.normal(loc=210, scale=15, size=24).round(2),
+    'Moto': np.random.normal(loc=170, scale=7, size=24).round(2),
+    'Auto': np.random.normal(loc=270, scale=10, size=24).round(2),
+    'SUV': np.random.normal(loc=370, scale=20, size=24).round(2),
 }
 
 fare_df = pd.DataFrame(data)
