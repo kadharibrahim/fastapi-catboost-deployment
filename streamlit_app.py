@@ -8,6 +8,8 @@ import streamlit.components.v1 as components
 import numpy as np
 import pandas as pd
 import plotly.express as px
+from PIL import Image
+
 
 # ✅ Set Page Configuration
 st.set_page_config(page_title="Uber Fare Prediction", layout="wide")
@@ -28,7 +30,7 @@ st.markdown(page_bg_img, unsafe_allow_html=True)
 
 GOOGLE_MAPS_API_KEY = "AIzaSyAbgA9gFMQo2ccFDTLS0L1oD3o48DQqZoo"
 FASTAPI_URL = "https://fastapi-catboost-deployment.onrender.com/predict/"
-share_url = "https://fastapi-catboost-deployment-2fwbm6usdyjwysvaytzgde.streamlit.app/#b7480d73"
+share_url = "https://uberfareai--ibiuv.streamlit.app/"
 
 location_mapping = {
     "Anna Nagar (VR Mall) 🏦": (13.0827, 80.2170, 1),
@@ -194,20 +196,34 @@ with col1:
                     break
                 except requests.exceptions.RequestException as e:
                     if attempt < max_retries - 1:
-                        st.warning("Waking up the prediction engine... please wait ⏳")
+                        st.warning("Warming up the engine for you... please wait ⏳")
                         time.sleep(5)  # wait before retry
                     else:
                         st.error("🚫 Could not connect to the prediction engine. Please try again later.")
                         st.stop()
 
 
+            # Initialize session state keys if not already set
+            if "auto_fare" not in st.session_state:
+                st.session_state.auto_fare = 0.0
+            if "moto_fare" not in st.session_state:
+                st.session_state.moto_fare = 0.0
+            if "uber_fare" not in st.session_state:
+                st.session_state.uber_fare = 0.0
+
+            # Response handling
             if response.status_code == 200:
                 result = response.json()
                 if "prediction" in result:
                     base_fare = round(result["prediction"][0], 2)
-                    st.session_state.auto_fare = base_fare
-                    st.session_state.moto_fare = round(base_fare * (0.45 + (random.uniform(0, 0.1))), 2)
-                    st.session_state.uber_fare = round(base_fare * (1.14 + (random.uniform(0, 0.1))), 2)
+
+                    adjusted_fare = base_fare - 50  # Subtract ₹50 from auto and uber fares
+
+                    st.session_state.auto_fare = round(adjusted_fare, 2)
+                    st.session_state.moto_fare = round(base_fare * (0.45 + random.uniform(0, 0.1)), 2)
+                    st.session_state.uber_fare = round(adjusted_fare * (1.14 + random.uniform(0, 0.1)), 2)
+
+
 
     with col_best_time:
         if st.button("⏳ Best Fare Time"):
@@ -252,7 +268,7 @@ with col1:
 # ✅ Ride Options OR Best Times Column
 with col2:
     if st.session_state.get("show_ride_options", False):
-        st.markdown("### 🚘 Choose a ride")
+        st.markdown("### 💰 Ride Your Way. Know Your Pay.")
         st.markdown(f"""<div style="border:2px solid black;padding:10px;border-radius:10px;">
             <h3>🏍️ Moto (1-seater)</h3><p>Fast & affordable bike ride</p><h2>₹{st.session_state.moto_fare}</h2>
         </div>""", unsafe_allow_html=True)
@@ -313,9 +329,9 @@ np.random.seed(42)
 
 data = {
     'Hour': hours,
-    'Moto': np.random.normal(loc=40, scale=5, size=24).round(2),
-    'Auto': np.random.normal(loc=60, scale=8, size=24).round(2),
-    'SUV': np.random.normal(loc=120, scale=15, size=24).round(2),
+    'Moto': np.random.normal(loc=120, scale=5, size=24).round(2),
+    'Auto': np.random.normal(loc=190, scale=8, size=24).round(2),
+    'SUV': np.random.normal(loc=210, scale=15, size=24).round(2),
 }
 
 fare_df = pd.DataFrame(data)
