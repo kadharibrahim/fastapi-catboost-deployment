@@ -1,5 +1,5 @@
 
-🚀 FastAPI + CatBoost Model Deployment: Uber Fare Prediction API
+🚀 real-time-fare-prediction: Uber Fare Prediction API
 =================================================================
 
 This project demonstrates a full ML workflow—from data analysis to deploying a CatBoost regression model using FastAPI. It predicts Uber ride fares based on trip features like time, location, and more. Ideal for learning and showcasing real-world machine learning deployment.
