@@ -195,7 +195,7 @@ This project is licensed under the MIT License.
 If you found this project helpful:
 - 🌟 Star this repository
 - 🍴 Fork it for your own use
-- 🧑‍💻 Connect with me on [LinkedIn](#)
+- 🧑‍💻 Connect with me on [linkedin.com/in/kadharibrahim](#)
 - 📬 Raise issues or ideas for improvements
 
 > “Building real-time, intelligent systems is no longer optional—it's the future.”  
