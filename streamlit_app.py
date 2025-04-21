@@ -212,9 +212,9 @@ with col1:
                 result = response.json()
                 if "prediction" in result:
                     base_fare = round(result["prediction"][0], 2)
-                    adjusted_fare = base_fare - 100  
+                    adjusted_fare = base_fare - 50  
                     st.session_state.auto_fare = round(adjusted_fare, 2)
-                    st.session_state.moto_fare = round(base_fare * (0.50 + random.uniform(0, 0.1)), 2)
+                    st.session_state.moto_fare = round(base_fare * (0.45 + random.uniform(0, 0.1)), 2)
                     st.session_state.uber_fare = round(adjusted_fare * (1.14 + random.uniform(0, 0.1)), 2)
 
     with col_best_time:
@@ -243,7 +243,7 @@ with col1:
                         resp = requests.post(FASTAPI_URL, json={"features": test_features})
                         if resp.status_code == 200 and "prediction" in resp.json():
                             base = resp.json()["prediction"][0]
-                            adjusted_base = base - 100  # ensure best fare is always less
+                            adjusted_base = base - 120  # ensure best fare is always less
                             moto = round(base * (0.45 + random.uniform(0, 0.1)), 2)
                             auto = round(adjusted_base, 2)
                             car = round(adjusted_base * (1.14 + random.uniform(0, 0.1)), 2)
