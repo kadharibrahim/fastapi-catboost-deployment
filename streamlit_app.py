@@ -3,13 +3,10 @@ import time
 import requests
 import datetime
 import random
-import pyperclip
 import streamlit.components.v1 as components
 import numpy as np
 import pandas as pd
 import plotly.express as px
-from PIL import Image
-
 
 # ✅ Set Page Configuration
 st.set_page_config(page_title="Uber Fare Prediction", layout="wide")
@@ -79,7 +76,7 @@ with col_title:
         height: 40px;
         overflow: hidden;
     }
-
+                
     .race-car {
         position: absolute;
         top: 0px;
@@ -101,8 +98,8 @@ pickup_date = current_datetime.date()
 pickup_time_obj = current_datetime.time()
 hour_of_day = pickup_time_obj.hour
 day_of_week = pickup_date.weekday()
-is_weekend = day_of_week in [5, 6]  # Saturday or Sunday
-is_peak_hour = 7 <= hour_of_day <= 9 or 17 <= hour_of_day <= 20
+is_weekend = day_of_week in [5, 6]
+is_peak_hour = 5 <= hour_of_day <= 8 or 17 <= hour_of_day <= 20
 is_night = hour_of_day >= 20 or hour_of_day < 6
 
 # Choose surge icon
@@ -202,7 +199,6 @@ with col1:
                         st.error("🚫 Could not connect to the prediction engine. Please try again later.")
                         st.stop()
 
-
             # Initialize session state keys if not already set
             if "auto_fare" not in st.session_state:
                 st.session_state.auto_fare = 0.0
@@ -216,14 +212,10 @@ with col1:
                 result = response.json()
                 if "prediction" in result:
                     base_fare = round(result["prediction"][0], 2)
-
-                    adjusted_fare = base_fare - 50  # Subtract ₹50 from auto and uber fares
-
+                    adjusted_fare = base_fare - 100  
                     st.session_state.auto_fare = round(adjusted_fare, 2)
-                    st.session_state.moto_fare = round(base_fare * (0.45 + random.uniform(0, 0.1)), 2)
+                    st.session_state.moto_fare = round(base_fare * (0.50 + random.uniform(0, 0.1)), 2)
                     st.session_state.uber_fare = round(adjusted_fare * (1.14 + random.uniform(0, 0.1)), 2)
-
-
 
     with col_best_time:
         if st.button("⏳ Best Fare Time"):
@@ -240,7 +232,6 @@ with col1:
                 test_hour = test_time.hour
                 test_inter = distance_km * test_hour
                 test_peak = 1 if (7 <= test_hour <= 9 or 17 <= test_hour <= 20) else 0
-
                 test_hour_features = [1 if j == test_hour else 0 for j in range(23)]
                 test_features = [
                     distance_km, is_weekend, test_peak, test_inter,
@@ -252,9 +243,10 @@ with col1:
                         resp = requests.post(FASTAPI_URL, json={"features": test_features})
                         if resp.status_code == 200 and "prediction" in resp.json():
                             base = resp.json()["prediction"][0]
+                            adjusted_base = base - 100  # ensure best fare is always less
                             moto = round(base * (0.45 + random.uniform(0, 0.1)), 2)
-                            auto = round(base, 2)
-                            car = round(base * (1.14 + random.uniform(0, 0.1)), 2)
+                            auto = round(adjusted_base, 2)
+                            car = round(adjusted_base * (1.14 + random.uniform(0, 0.1)), 2)
 
                             if moto < st.session_state.cheapest_fares["Moto"]["fare"]:
                                 st.session_state.cheapest_fares["Moto"] = {"fare": moto, "time": label}
@@ -297,10 +289,10 @@ with col2:
             </div>
             """, unsafe_allow_html=True)
 
-# 🎯 Let user guess the fare (just for fun!)
+# Let user guess the fare (just for fun!)
 guess = st.slider("🎯 Guess the fare (just for fun!)", min_value=50, max_value=1000, step=10)
 
-# ✨ Button to reveal predicted fare
+#  Button to reveal predicted fare
 if st.button("🎲 Reveal Actual Auto Fare"):
     st.write(f"👉 Your guess: ₹{guess}")
 
@@ -310,7 +302,7 @@ if st.button("🎲 Reveal Actual Auto Fare"):
         high = round(predicted_fare * 1.05, 2)
         st.success(f"🧠 Estimated Auto fare range: ₹{low} – ₹{high}")
 
-        # 🏆 Bonus feedback based on guess accuracy
+        # Bonus feedback based on guess accuracy
         diff = abs(predicted_fare - guess)
 
         if diff <= 20:
