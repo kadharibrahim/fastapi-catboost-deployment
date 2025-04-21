@@ -233,9 +233,6 @@ FastAPI by Sebastián Ramírez
 
 Dataset inspired by Uber open trip data
 
-📜 License
-This project is licensed under the MIT License.
-
 ⭐️ Show Your Support
 If you found this project helpful:
 
