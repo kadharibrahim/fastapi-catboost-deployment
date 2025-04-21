@@ -212,7 +212,7 @@ with col1:
                 result = response.json()
                 if "prediction" in result:
                     base_fare = round(result["prediction"][0], 2)
-                    adjusted_fare = base_fare - 50  
+                    adjusted_fare = base_fare - 75  
                     st.session_state.auto_fare = round(adjusted_fare, 2)
                     st.session_state.moto_fare = round(base_fare * (0.45 + random.uniform(0, 0.1)), 2)
                     st.session_state.uber_fare = round(adjusted_fare * (1.14 + random.uniform(0, 0.1)), 2)
